@@ -1,26 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Create.css';
+import { useFetch } from '../../hooks/useFetch';
+import { useHistory } from 'react-router-dom';
 
 function Create(props) {
 	const [title, setTitle] = useState('');
 	const [method, setMethod] = useState('');
 	const [cookingTime, setCookingTime] = useState('');
-	const [newIngredients, setNewIngredients] = useState('');
+	const [newIngredient, setNewIngredient] = useState('');
 	const [ingredients, setIngredients] = useState([]);
+	const ingredientInput = useRef(null);
+
+	const history = useHistory();
+
+	const { postData, data, error } = useFetch(
+		'http://localhost:5000/recipes',
+		'POST'
+	);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(title, method, cookingTime);
+		postData({
+			title,
+			ingredients,
+			method,
+			cookingTime: cookingTime + 'minutes',
+		});
 	};
 
 	const handleAdd = (e) => {
 		e.preventDefault();
-		const ing = newIngredients.trim();
+		const ing = newIngredient.trim();
 
 		if (ing && !ingredients.includes(ing)) {
 			setIngredients((prevIngredients) => [...prevIngredients, ing]);
 		}
+		setNewIngredient('');
+		ingredientInput.current.focus();
 	};
+
+	//Redirect a user when we get data response
+	useEffect(() => {
+		if (data) {
+			history.push('/');
+		}
+	}, [data]);
 
 	return (
 		<div className="create">
@@ -42,14 +66,21 @@ function Create(props) {
 					<div className="ingredients">
 						<input
 							type="text"
-							onChange={(e) => setNewIngredients(e.target.value)}
-							value={newIngredients}
+							onChange={(e) => setNewIngredient(e.target.value)}
+							value={newIngredient}
+							ref={ingredientInput}
 						/>
 						<button onClick={handleAdd} className="btn">
 							Add
 						</button>
 					</div>
 				</label>
+				<p>
+					Current ingredients:{' '}
+					{ingredients.map((i) => (
+						<em key={i}>{i},</em>
+					))}
+				</p>
 
 				<label>
 					<span>Recipe method:</span>
