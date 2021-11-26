@@ -6,6 +6,8 @@
 
 ##### You can navigate from one function to another using Navbar on top of the site.
 
+##### You can change color theme of the site either to be dark or light by clicking color theme icon, same wise apply to Navbar color selector.
+
 Note: This site is still on expansion for more features
 
 [Click this link to view the Live Demo](https://cooking-recipes-site.web.app/)
